@@ -1,12 +1,10 @@
 package com.example.foodorderapp;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.foodorderapp.Adapters.OrdersAdapter;
@@ -17,7 +15,7 @@ import java.util.ArrayList;
 
 public class OrderActivity extends AppCompatActivity {
 
-    ActivityOrderBinding binding;
+    private ActivityOrderBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,22 +23,17 @@ public class OrderActivity extends AppCompatActivity {
         binding = ActivityOrderBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-//        ArrayList<OrdersModel> list = new ArrayList<>();
-//        list.add(new OrdersModel(R.drawable.burgerdeal, "Cheese Burger", "4.99", "1"));
-//        list.add(new OrdersModel(R.drawable.burgerdeal2, "Chicken Burger", "7.99", "2"));
-//        list.add(new OrdersModel(R.drawable.pizza, "Pizza", "6.99", "3"));
-//        list.add(new OrdersModel(R.drawable.paratharoll, "Paratha Roll", "3.99", "4"));
-//        list.add(new OrdersModel(R.drawable.colddrink, "Cold Drink", "0.99", "5"));
+        DBHelper dbHelper = new DBHelper(this);
+        ArrayList<OrdersModel> ordersList = dbHelper.getOrder();
 
-        DBHelper helper = new DBHelper(this);
-        ArrayList<OrdersModel> list = helper.getOrder();
-
-        OrdersAdapter adapter = new OrdersAdapter(list, this);
-        binding.ordersRecyclerView.setAdapter(adapter);
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        binding.ordersRecyclerView.setLayoutManager(layoutManager);
-
-
+        if (ordersList.isEmpty()) {
+            Toast.makeText(this, "No orders found", Toast.LENGTH_SHORT).show();
+            binding.ordersRecyclerView.setVisibility(View.GONE);  // Hide RecyclerView
+        } else {
+            binding.ordersRecyclerView.setVisibility(View.VISIBLE);
+            OrdersAdapter adapter = new OrdersAdapter(ordersList, this);
+            binding.ordersRecyclerView.setAdapter(adapter);
+            binding.ordersRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        }
     }
 }

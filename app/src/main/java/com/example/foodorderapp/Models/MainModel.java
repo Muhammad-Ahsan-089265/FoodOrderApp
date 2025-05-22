@@ -1,8 +1,13 @@
 package com.example.foodorderapp.Models;
 
+/**
+ * Model class representing a main food item.
+ */
 public class MainModel {
-    int image;
-    String name, price, description;
+    private int image;           // Drawable resource ID for the food image
+    private String name;         // Name of the food item
+    private String price;        // Price as a string (e.g., "4.99")
+    private String description;  // Description of the food item
 
     public MainModel(int image, String name, String price, String description) {
         this.image = image;
@@ -11,6 +16,7 @@ public class MainModel {
         this.description = description;
     }
 
+    // Getters and Setters
     public int getImage() {
         return image;
     }

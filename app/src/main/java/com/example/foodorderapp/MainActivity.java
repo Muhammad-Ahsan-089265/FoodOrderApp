@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    ActivityMainBinding binding;
+    private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,16 +28,14 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        // Prepare list of food items
         ArrayList<MainModel> list = new ArrayList<>();
-
         list.add(new MainModel(R.drawable.singleburger, "Burger", "4.99", "Chicken Burger with Extra Cheese"));
         list.add(new MainModel(R.drawable.burgerdeal, "Burger Deal 1", "7.99", "1 Zinger Burger with Sizzling Fries"));
         list.add(new MainModel(R.drawable.burgerdeal2, "Burger Deal 2", "8.99", "3 Chicken Burger with Extra Cheese"));
         list.add(new MainModel(R.drawable.pizza, "Pizza", "6.99", "Pizza (Small - Medium - Large)"));
         list.add(new MainModel(R.drawable.paratharoll, "Paratha Roll", "3.99", "Paratha Roll with Extra Mayonnaise"));
         list.add(new MainModel(R.drawable.colddrink, "Cold Drink", "0.99", "Cold Drink (Pak Cola - Pak Lime)"));
-
-
         list.add(new MainModel(R.drawable.bacon_and_cheese_heaven, "Bacon and Cheese Heaven", "5.99", "Tasty bacon and cheese heaven to satisfy your cravings."));
         list.add(new MainModel(R.drawable.baconwrapped_filet_mignon, "Bacon-Wrapped Filet Mignon", "6.49", "Tasty bacon-wrapped filet mignon to satisfy your cravings."));
         list.add(new MainModel(R.drawable.bbq_chicken_delight, "BBQ Chicken Delight", "6.99", "Tasty BBQ chicken delight to satisfy your cravings."));
@@ -103,23 +101,23 @@ public class MainActivity extends AppCompatActivity {
         list.add(new MainModel(R.drawable.veggie_roll, "Veggie Roll", "5.49", "Vegetarian sushi roll to satisfy your cravings."));
         list.add(new MainModel(R.drawable.veggie_supreme, "Veggie Supreme", "6.49", "Supreme veggie pizza to satisfy your cravings."));
 
-
-
+        // Setup adapter and RecyclerView
         MainAdapter adapter = new MainAdapter(list, this);
-        binding.recycleView.setAdapter(adapter);
+        binding.recyclerView.setAdapter(adapter);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        binding.recycleView.setLayoutManager(layoutManager);
+        binding.recyclerView.setLayoutManager(layoutManager);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu, menu);
+        getMenuInflater().inflate(R.menu.menu, menu);  // Inflate the menu resource
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        // Handle menu item clicks
         if (item.getItemId() == R.id.orders) {
             startActivity(new Intent(MainActivity.this, OrderActivity.class));
             return true;
@@ -129,28 +127,15 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        // Show confirmation dialog on back press
         new AlertDialog.Builder(MainActivity.this)
                 .setTitle("Exit")
-                .setIcon(R.drawable.warning)
+                .setIcon(R.drawable.warning)  // Make sure this drawable exists
                 .setMessage("Are you sure you want to exit?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        finish();
-                    }
-                })
-                .setNeutralButton("Help", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Toast.makeText(MainActivity.this, "Open help", Toast.LENGTH_LONG).show();
-                    }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.cancel();
-                    }
-                })
+                .setPositiveButton("Yes", (dialogInterface, i) -> MainActivity.super.onBackPressed())
+                .setNeutralButton("Help", (dialogInterface, i) ->
+                        Toast.makeText(MainActivity.this, "Open help", Toast.LENGTH_LONG).show())
+                .setNegativeButton("No", null)
                 .show();
     }
 }

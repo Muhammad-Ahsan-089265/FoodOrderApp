@@ -2,7 +2,6 @@ package com.example.foodorderapp.Adapters;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,8 +22,8 @@ import java.util.ArrayList;
 
 public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.ViewHolder> {
 
-    ArrayList<OrdersModel> list;
-    Context context;
+    private ArrayList<OrdersModel> list;
+    private Context context;
 
     public OrdersAdapter(ArrayList<OrdersModel> list, Context context) {
         this.list = list;
@@ -40,65 +39,53 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        OrdersModel model = list.get(position);
+        final OrdersModel model = list.get(position);
+
         holder.orderImage.setImageResource(model.getOrderImage());
         holder.soldItemName.setText(model.getSoldItemName());
-        holder.orderNumber.setText(model.getOrderNumber());
-        holder.price.setText(model.getPrice());
+        holder.orderNumber.setText("Order #" + model.getOrderNumber());
+        holder.price.setText(model.getFormattedPrice());
+        holder.descriptionTextView.setText(model.getDescription());  // <-- fixed here
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(context, DetailActivity.class);
-                intent.putExtra("id", Integer.parseInt(model.getOrderNumber()));
-                intent.putExtra("type", 2);
-                context.startActivity(intent);
-
-            }
+        holder.itemView.setOnClickListener(view -> {
+            Intent intent = new Intent(context, DetailActivity.class);
+            intent.putExtra("id", model.getOrderNumber());
+            intent.putExtra("type", 2);
+            context.startActivity(intent);
         });
 
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                new AlertDialog.Builder(context)
-                        .setTitle("Delete Item")
-                        .setMessage("Are you sure you want to delete this item?")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                DBHelper helper = new DBHelper(context);
-
-                                // Assuming getOrderNumber() exists in your MainModel class
-                                if (helper.deleteOrder(model.getOrderNumber()) > 0) {
-                                    Toast.makeText(context, "Deleted.", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Toast.makeText(context, "Error.", Toast.LENGTH_SHORT).show();
-                                }
+        holder.itemView.setOnLongClickListener(view -> {
+            new AlertDialog.Builder(context)
+                    .setTitle("Delete Item")
+                    .setMessage("Are you sure you want to delete this item?")
+                    .setPositiveButton("Yes", (dialogInterface, i) -> {
+                        DBHelper helper = new DBHelper(context);
+                        if (helper.deleteOrder(String.valueOf(model.getOrderNumber())) > 0) {
+                            Toast.makeText(context, "Deleted.", Toast.LENGTH_SHORT).show();
+                            int pos = list.indexOf(model);
+                            if (pos != -1) {
+                                list.remove(pos);
+                                notifyItemRemoved(pos);
                             }
-                        })
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                dialogInterface.dismiss(); // optional
-                            }
-                        })
-                        .show();
+                        } else {
+                            Toast.makeText(context, "Error deleting item.", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss())
+                    .show();
 
-                return false;
-            }
+            return true;
         });
-
-
     }
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return list == null ? 0 : list.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView orderImage;
-        TextView soldItemName, orderNumber, price;
+        TextView soldItemName, orderNumber, price, descriptionTextView;  // added descriptionTextView
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -106,6 +93,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.ViewHolder
             soldItemName = itemView.findViewById(R.id.orderItemName);
             orderNumber = itemView.findViewById(R.id.orderNumber);
             price = itemView.findViewById(R.id.orderPrice);
+            descriptionTextView = itemView.findViewById(R.id.orderDescription);  // <-- add this
         }
     }
 }

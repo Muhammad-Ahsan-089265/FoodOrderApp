@@ -2,16 +2,28 @@ package com.example.foodorderapp.Models;
 
 public class OrdersModel {
 
-    int orderImage;
-    String SoldItemName , Price, OrderNumber;
+    private int orderImage;
+    private String soldItemName;
+    private int price;          // Price stored as integer (e.g., cents)
+    private int orderNumber;    // Order ID or number
+    private int quantity;       // Quantity ordered
+    private String description; // Description of the order/food item
 
-    public OrdersModel(int orderImage, String soldItemName, String price, String orderNumber) {
+    // Full constructor with quantity and description
+    public OrdersModel(int orderImage, String soldItemName, int price, int orderNumber, int quantity, String description) {
         this.orderImage = orderImage;
-        SoldItemName = soldItemName;
-        Price = price;
-        OrderNumber = orderNumber;
+        this.soldItemName = soldItemName;
+        this.price = price;
+        this.orderNumber = orderNumber;
+        this.quantity = quantity;
+        this.description = description;
     }
 
+    // Empty constructor
+    public OrdersModel() {
+    }
+
+    // Getters and setters
     public int getOrderImage() {
         return orderImage;
     }
@@ -21,26 +33,59 @@ public class OrdersModel {
     }
 
     public String getSoldItemName() {
-        return SoldItemName;
+        return soldItemName;
     }
 
     public void setSoldItemName(String soldItemName) {
-        SoldItemName = soldItemName;
+        this.soldItemName = soldItemName;
     }
 
-    public String getPrice() {
-        return Price;
+    public int getPrice() {
+        return price;
     }
 
-    public void setPrice(String price) {
-        Price = price;
+    public void setPrice(int price) {
+        this.price = price;
     }
 
-    public String getOrderNumber() {
-        return OrderNumber;
+    public int getOrderNumber() {
+        return orderNumber;
     }
 
-    public void setOrderNumber(String orderNumber) {
-        OrderNumber = orderNumber;
+    public void setOrderNumber(int orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    // Format price as string with 2 decimals
+    public String getFormattedPrice() {
+        return String.format("%.2f", price / 100.0);
+    }
+
+    @Override
+    public String toString() {
+        return "OrdersModel{" +
+                "orderImage=" + orderImage +
+                ", soldItemName='" + soldItemName + '\'' +
+                ", price=" + price +
+                ", orderNumber=" + orderNumber +
+                ", quantity=" + quantity +
+                ", description='" + description + '\'' +
+                '}';
     }
 }

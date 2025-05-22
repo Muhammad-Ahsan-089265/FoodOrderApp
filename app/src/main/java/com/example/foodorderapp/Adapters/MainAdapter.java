@@ -12,15 +12,15 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.foodorderapp.DetailActivity;
+import com.example.foodorderapp.Models.MainModel;
 import com.example.foodorderapp.R;
-import com.example.foodorderapp.Models.MainModel; // Adjust this import to your MainModel's location
 
 import java.util.ArrayList;
 
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
-    private ArrayList<MainModel> list;
-    private Context context;
+    private final ArrayList<MainModel> list;
+    private final Context context;
 
     public MainAdapter(ArrayList<MainModel> list, Context context) {
         this.list = list;
@@ -30,7 +30,8 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.sample_mainfood, parent, false);
+        View view = LayoutInflater.from(context)
+                .inflate(R.layout.sample_mainfood, parent, false);
         return new ViewHolder(view);
     }
 
@@ -39,35 +40,32 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         final MainModel model = list.get(position);
         holder.foodImage.setImageResource(model.getImage());
         holder.mainName.setText(model.getName());
-        holder.price.setText(model.getPrice());
+        holder.price.setText(String.valueOf(model.getPrice()));
         holder.description.setText(model.getDescription());
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(context, DetailActivity.class);
-                intent.putExtra("image", model.getImage());
-                intent.putExtra("price", model.getPrice());
-                intent.putExtra("description", model.getDescription());
-                intent.putExtra("name", model.getName());
-                intent.putExtra("type", 1);
-                context.startActivity(intent);
-            }
+        // Open DetailActivity on item click, passing data through intent extras
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, DetailActivity.class);
+            intent.putExtra("image", model.getImage());
+            intent.putExtra("price", model.getPrice());
+            intent.putExtra("description", model.getDescription());
+            intent.putExtra("name", model.getName());
+            intent.putExtra("type", 1); // Could be used to distinguish types of items in DetailActivity
+            context.startActivity(intent);
         });
     }
 
     @Override
     public int getItemCount() {
-        return list == null ? 0 : list.size();
+        return list != null ? list.size() : 0;
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView foodImage;
-        TextView mainName, price, description;
+    static class ViewHolder extends RecyclerView.ViewHolder {
+        final ImageView foodImage;
+        final TextView mainName, price, description;
 
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
-
             foodImage = itemView.findViewById(R.id.imageView);
             mainName = itemView.findViewById(R.id.name);
             price = itemView.findViewById(R.id.orderPrice);

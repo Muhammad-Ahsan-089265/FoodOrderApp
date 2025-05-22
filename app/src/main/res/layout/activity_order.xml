@@ -11,5 +11,9 @@
         android:id="@+id/ordersRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:contentDescription="@string/list_of_orders"
         tools:listitem="@layout/order_sample" />
+
+
 </LinearLayout>
+
